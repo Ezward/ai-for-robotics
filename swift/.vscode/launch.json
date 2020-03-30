@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(lldb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "preLaunchTask": "swiftc with debug",
+            "launchCompleteCommand": "exec-run",
+            "linux": {
+              "MIMode": "lldb",
+              "miDebuggerPath": "/usr/bin/lldb-mi"
+            },
+            "osx": {
+              "MIMode": "lldb"
+            },
+            "windows": {
+              "MIMode": "gdb",
+              "miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+            }        
+        },
+    ]
+}
