@@ -11,7 +11,7 @@
 
 var p=[0.2, 0.2, 0.2, 0.2, 0.2]
 let world=["green", "red", "red", "green", "green"]
-var Z = "red"
+var Z = "green"
 let pHit = 0.6
 let pMiss = 0.2
 
@@ -23,7 +23,8 @@ func sense(_ prior: [Double], _ measurement: String) -> [Double] {
     // ADD YOUR CODE HERE
     // 
     let q = prior.enumerated().map {(index, value) in value * ((measurement == world[index]) ? pHit : pMiss) }
-    return q
+    let sum = q.sum()
+    return q.map {$0 / sum}
 }
 
 
@@ -52,6 +53,6 @@ extension Double {
     }
 }
 
-print(sense(p, Z).sum().isApproximately(0.36, 0.0001))
+print(sense(p, Z).sum().isApproximately(1.0, 0.0001))
 
-assert((sense(p, Z)).sum().isApproximately(0.36, 0.0001))
+assert((sense(p, Z)).sum().isApproximately(1.0, 0.0001))

@@ -1,17 +1,10 @@
-// Modify the code below so that the function sense, which
-// takes p and Z as inputs, will output the NON-normalized
-// probability distribution, q, after multiplying the entries
-// in p by pHit or pMiss according to the color in the
-// corresponding cell in world.
-// Modify your code so that it normalizes the output for
-// the function sense. This means that the entries in q
-// should sum to one.
+// Program a function that returns a new distribution
+// q, shifted to the right by U units. If U=0, q should
+// be the same as p.
 
-
-
-var p=[0.2, 0.2, 0.2, 0.2, 0.2]
+var p=[0.0, 1.0, 0.0, 0.0, 0.0]
 let world=["green", "red", "red", "green", "green"]
-var Z = "red"
+let measurements = ["red", "green"]
 let pHit = 0.6
 let pMiss = 0.2
 
@@ -23,13 +16,23 @@ func sense(_ prior: [Double], _ measurement: String) -> [Double] {
     // ADD YOUR CODE HERE
     // 
     let q = prior.enumerated().map {(index, value) in value * ((measurement == world[index]) ? pHit : pMiss) }
+    let sum = q.sum()
+    return q.map {$0 / sum}
+}
+
+func move(_ p: [Double], _ U: Int) -> [Double] {
+    // 
+    // ADD CODE HERE
+    // 
+    let n = p.count
+    let i = U % n
+    let q = Array(p.suffix(i) + p.prefix(n - i))
     return q
 }
 
-
 // self-test /////////////////////////////////////////////////////////////////////
-
-print(sense(p, Z))
+let q = move(p, 1)
+print(q)
 
 extension Sequence where Element: AdditiveArithmetic {
     /*
@@ -40,7 +43,7 @@ extension Sequence where Element: AdditiveArithmetic {
     }
 }
 
-print(sense(p, Z).sum())
+print(q.sum())
 
 extension Double {
     /*
@@ -52,6 +55,6 @@ extension Double {
     }
 }
 
-print(sense(p, Z).sum().isApproximately(0.36, 0.0001))
+print(q.sum().isApproximately(1.0, 0.0001))
 
-assert((sense(p, Z)).sum().isApproximately(0.36, 0.0001))
+assert(q.sum().isApproximately(1.0, 0.0001))
