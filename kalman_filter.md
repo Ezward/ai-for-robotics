@@ -22,22 +22,77 @@ Kalman Filter equations
 	- x' = x + ẋ is the updated position after one unit of time or x' = x + ẋ * △t where △t is change in time.
 	- ẋ' = ẋ, assuming a constant velocity
 	
-- Kalman Filter equations in matrix form : these produce the motion update equations above
+- In higher dimensions
+    - D is the number of dimensions
+    - μ = the mean is a vector of dimension D 
+    - σ² = Σ, the variance is now called the covariance and is a DxD square matrix
+
+```    
+    μ = [μ₀ ] 
+        [μ₁ ]
+        [...]
+        [μ_D]
+``` 
+```
+    σ² = Σ = [σ²₀₀,  σ²₀₁,  ..., σ²₀_D]
+             [σ²₁₀,  σ²₁₁,  ..., σ²₁_D]
+             [              ...       ]
+             [σ²_D₀, σ²_D₁, ..., σ²_DD]
+```
+
+
+- Kalman Filter State Transition Function (the prediction function) for 1D where our state is the position and velocity.
+- so this is the matrix form of x' = x + ẋ and ẋ' = ẋ (again assuming constant time intervals)
+- so the 1D prediction step is
 ```
     [x'] = [1, 1] * [x]
     [ẋ']   [0, 1]   [ẋ]
 ```
 
-Here the square matrix that generates the updated is referred to as F, the state transition matrix 
+Here the square matrix that generates the updated state from the prior state is referred to as F, the state transition matrix 
 ```
     F = [1, 1]
         [0, 1]
 ```
    
-The vector H retrieves the position from the motion vector.
+The measurement function; vector H retrieves the position from the motion vector.
+The 1D measurement step is
 ```
     x = [1, 0] * [x]
                  [ẋ]
     z = [1, 0]
 
 ```
+
+Prediction step generalized
+```
+    x' = Fx + u
+    P' = F·P·Fᵀ 
+```
+- x is the prior position estimate
+- P is the prior covariance matrix
+- F is the state transition matrix
+- u is the motion vector
+- x' is the updated position estimate
+- P' is the updated covariance matrix
+
+Measurement step generalized
+```
+    y = z - H·x
+    S = H·P·Hᵀ + R
+    K = P·Hᵀ·S⁻¹
+    x' = x + (K·y)
+    P' = (I - K·H)·P
+```
+- z is the measurement
+- x is the prior position estimate
+- R is the measurement noise
+- H is the measurement function which maps the state vector to measurements
+- y is the error
+- S is mapping of covariance into measurement space with noise
+- K is the Kalman Gain
+- I is the identity matrix
+- x' is the updated position estimate
+- P' is the updated covariance matrix
+
+      
