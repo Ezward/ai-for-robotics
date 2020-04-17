@@ -15,7 +15,9 @@ def gaussian(mean, variance, x):
     """
     return (1.0 / math.sqrt(2.0 * math.pi * variance)) * math.exp(-0.5 * ((x - mean)**2 / variance))
 
-
+#
+# measurement uses Bayes Rule/Product
+#
 def update(mean1, variance1, mean2, variance2):
     """
     'Measure' or 'Sense'
@@ -31,6 +33,9 @@ def update(mean1, variance1, mean2, variance2):
     variance = 1.0 / (1.0 / variance1 + 1.0 / variance2)
     return (mean, variance)
 
+#
+# motion/predict uses total probability/convolution/addition
+#
 def predict(mean1, variance1, mean2, variance2):
     """
     'Move'
