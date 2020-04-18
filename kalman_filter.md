@@ -51,6 +51,10 @@ Kalman Filter equations
 
 Here the square matrix that generates the updated state from the prior state is referred to as F, the state transition matrix 
 ```
+    F = [1, △t]
+        [0,  1]
+
+    For constant velocity assuming 1 time unit between measurements (as in prediction step above)
     F = [1, 1]
         [0, 1]
 ```
@@ -64,6 +68,21 @@ The 1D measurement step is
 
 ```
 
+State Vector and State Transition Matrix for two dimensions
+```
+    State vector = 
+    [x]
+    [y]
+    [ẋ]
+    [ẏ]
+
+    State Transition Matrix = 
+    [1,  0, △t,  0]
+    [0,  1,  0, △t]
+    [0,  0,  1,  0]
+    [0,  0,  0,  1]
+```
+
 Prediction step generalized
 ```
     x' = Fx + u
@@ -72,23 +91,23 @@ Prediction step generalized
 - x is the prior position estimate
 - P is the prior covariance matrix
 - F is the state transition matrix
-- u is the motion vector
+- u is the motion vector (used to inject known external motions or accelerations; like from steering or throttle)
 - x' is the updated position estimate
 - P' is the updated covariance matrix
 
 Measurement step generalized
 ```
-    y = z - H·x
+    e = z - H·x
     S = H·P·Hᵀ + R
     K = P·Hᵀ·S⁻¹
-    x' = x + (K·y)
+    x' = x + (K·e)
     P' = (I - K·H)·P
 ```
-- z is the measurement
+- z is the measurement 
+- e is the error between our estimate and the measurement
 - x is the prior position estimate
-- R is the measurement noise
-- H is the measurement function which maps the state vector to measurements
-- y is the error
+- R is the measurement noise matrix (found experimentally or from data sheets)
+- H is the measurement function which maps the state vector to measurement space (so (x, y, ẋ, ẏ) to (x, y) for instance)
 - S is mapping of covariance into measurement space with noise
 - K is the Kalman Gain
 - I is the identity matrix

@@ -13,7 +13,7 @@
         {
             "label": "swiftc with debug",
             "type": "shell",
-            "command": "swiftc -g ${file} -o ${fileBasenameNoExtension}",
+            "command": "swiftc -g ${file} -o ${fileDirname}/${fileBasenameNoExtension}",
             "group": {
                 "kind": "build",
                 "isDefault": true
