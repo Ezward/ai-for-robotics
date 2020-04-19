@@ -2,13 +2,13 @@
 // predict based on the location measurements
 // and inferred motions shown below.
 
-func update(_ mean1: Double, _ var1: Double, _ mean2: Double, _ var2: Double) -> (Double, Double) {
+func update(_ mean1: Double, _ var1: Double, _ mean2: Double, _ var2: Double) -> (mu: Double, sig: Double) {
     let new_mean = (var2 * mean1 + var1 * mean2) / (var1 + var2)
     let new_var = 1/(1/var1 + 1/var2)
     return (new_mean, new_var)
 }
 
-func predict(_ mean1: Double, _ var1: Double, _ mean2: Double, _ var2: Double) -> (Double, Double) {
+func predict(_ mean1: Double, _ var1: Double, _ mean2: Double, _ var2: Double) -> (mu: Double, sig: Double) {
     let new_mean = mean1 + mean2
     let new_var = var1 + var2
     return (new_mean, new_var)
@@ -25,11 +25,10 @@ var sig = 10000.0
 //and the variance in a list [mu, sig].
 
 // Insert code here
-var gaussian = (mu, sig)
+var gaussian = (mu: mu, sig: sig)
 for i in (0...measurements.count-1) {
-    gaussian = update(gaussian.0, gaussian.1, measurements[i], measurement_sig)
-    gaussian = predict(gaussian.0, gaussian.1, motion[i], motion_sig)
-
+    gaussian = update(gaussian.mu, gaussian.sig, measurements[i], measurement_sig)
+    gaussian = predict(gaussian.mu, gaussian.sig, motion[i], motion_sig)
 }
 
 print(gaussian)
