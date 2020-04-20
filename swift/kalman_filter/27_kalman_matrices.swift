@@ -9,6 +9,9 @@ public enum ValueError: Error {
     case incompatibleDimensions
 }
 
+//
+// 2D matrix of Double
+//
 public struct Matrix {
 
     // implements basic operations of a matrix class
@@ -184,8 +187,8 @@ public struct Matrix {
 
         for i in (0...dim-1) {
             // S = sum([(res.value[k][i]) ** 2 for k in range(i)])
-            let S = (0 == i) ? 0.0 : (0...i-1).map { k in res[k, i] * res[k, i] }.reduce(0.0, +)
-            let d = self[i, i] - S
+            let s = (0 == i) ? 0.0 : (0...i-1).map { k in res[k, i] * res[k, i] }.reduce(0.0, +)
+            let d = self[i, i] - s
             if abs(d) < zeroTolerance {
                 res[i, i] = 0.0
             } else {
@@ -195,11 +198,11 @@ public struct Matrix {
             if((i + 1) < (dim - 1)) {
                 for j in (i + 1...dim-1) {
                     // S = sum([res.value[k][i] * res.value[k][j] for k in range(self.rows)])
-                    var S = (0...dim-1).map { k in res[k, i] * res[k, j] }.reduce(0.0, +)
-                    if abs(S) < zeroTolerance {
-                        S = 0.0
+                    var s = (0...dim-1).map { k in res[k, i] * res[k, j] }.reduce(0.0, +)
+                    if abs(s) < zeroTolerance {
+                        s = 0.0
                     }
-                    res[i, j] = (self[i, j] - S) / res[i, i]
+                    res[i, j] = (self[i, j] - s) / res[i, i]
                 }
             }
         }
@@ -219,8 +222,8 @@ public struct Matrix {
         for j in (0...dim-1).reversed() {
             let tjj = self[j, j]
             // S = sum([self.value[j][k] * res.value[j][k] for k in range(j + 1, self.dimx)])
-            let S = ((j + 1) >= (dim - 1)) ? 0.0 : (j + 1...dim - 1).map { k in self[j, k] * res[j, k] }.reduce(0.0, +)
-            res[j, j] = 1.0 / (tjj * tjj) - S / tjj
+            let s = ((j + 1) >= (dim - 1)) ? 0.0 : (j + 1...dim - 1).map { k in self[j, k] * res[j, k] }.reduce(0.0, +)
+            res[j, j] = 1.0 / (tjj * tjj) - s / tjj
             if (j - 1) > 0 {
                 for i in (0...j-1).reversed() {
                     // res.value[j][i] = res.value[i][j] = -sum(
@@ -239,86 +242,7 @@ public struct Matrix {
         let inversion = choleskyFactor.choleskyInverse()
         return inversion
     }
-
-    // def Cholesky(self, zeroTolerance=1.0e-5):
-    //     // Computes the upper triangular Cholesky factorization of
-    //     // a positive definite matrix.
-    //     res = matrix([[]])
-    //     res.zero(self.rows, self.rows)
-
-    //     for i in range(self.rows):
-    //         S = sum([(res.value[k][i]) ** 2 for k in range(i)])
-    //         d = self.value[i][i] - S
-    //         if abs(d) < zeroTolerance:
-    //             res.value[i][i] = 0.0
-    //         else:
-    //             if d < 0.0:
-    //                 raise ValueError("Matrix not positive-definite")
-    //             res.value[i][i] = sqrt(d)
-    //         for j in range(i + 1, self.rows):
-    //             S = sum([res.value[k][i] * res.value[k][j] for k in range(self.rows)])
-    //             if abs(S) < zeroTolerance:
-    //                 S = 0.0
-    //             try:
-    //                 res.value[i][j] = (self.value[i][j] - S) / res.value[i][i]
-    //             except:
-    //                 raise ValueError("Zero diagonal")
-    //     return res
-
-    // def CholeskyInverse(self):
-    //     // Computes inverse of matrix given its Cholesky upper Triangular
-    //     // decomposition of matrix.
-    //     res = matrix([[]])
-    //     res.zero(self.rows, self.rows)
-
-    //     // Backward step for inverse.
-    //     for j in reversed(range(self.rows)):
-    //         tjj = self.value[j][j]
-    //         S = sum([self.value[j][k] * res.value[j][k] for k in range(j + 1, self.rows)])
-    //         res.value[j][j] = 1.0 / tjj ** 2 - S / tjj
-    //         for i in reversed(range(j)):
-    //             res.value[j][i] = res.value[i][j] = -sum(
-    //                 [self.value[i][k] * res.value[k][j] for k in range(i + 1, self.rows)]) / self.value[i][i]
-    //     return res
-
-    // def inverse(self):
-    //     assert(self.rows == self.cols, "Inversion requires a square positive-definite matrix")
-    //     aux = self.Cholesky()
-    //     res = aux.CholeskyInverse()
-    //     return res
-
-    // def __repr__(self):
-    //     return repr(self.value)
 }
-
-
-
-// let zeros = Matrix.zeros(4, 4)
-// let identity = Matrix.identity(dim: 4)
-// let stateTransitionMatrix = Matrix([[1.0, 0.0, 1.0, 0.0], 
-//                                     [0.0, 1.0, 0.0, 1.0], 
-//                                     [0.0, 0.0, 1.0, 0.0], 
-//                                     [0.0, 0.0, 0.0, 1.0]])
-
-// zeros.show()
-// identity.show()
-// stateTransitionMatrix.show()
-
-// let sum = zeros + identity + stateTransitionMatrix
-// sum.show()
-
-// let diff = sum - stateTransitionMatrix - identity
-// diff.show()
-
-// let product = stateTransitionMatrix * identity
-// product.show()
-
-// assert(stateTransitionMatrix * identity == stateTransitionMatrix * identity)
-
-// Matrix([[11, 12, 13], [21, 22, 23]]).transpose().show()
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -376,7 +300,7 @@ result.P.show()
 // P: [[2.3318904241194827, 0.9991676099921091], [0.9991676099921067, 0.49950058263974184]]
 
 /*
-// Two dimensional kalman filter matrices
+// Two dimensional kalman filter matrices assuming state matrix of [x, y, ẋ, ẏ]
 dt = 0.1 // constant velocity
 x = matrix([[initial_xy[0]], [initial_xy[1]], [0.0], [0.0]])  // initial state (known location and unknown velocity so we choose zero)
 u = matrix([[0.0], [0.0], [0.0], [0.0]])  // assume no external motion
