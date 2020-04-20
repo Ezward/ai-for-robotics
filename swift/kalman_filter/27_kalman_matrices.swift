@@ -1,6 +1,8 @@
 // Write a function 'kalman_filter' that implements a multi-
 // dimensional Kalman Filter for the example given
 
+import Foundation
+
 public enum ValueError: Error {
     case invalidSize
     case invalidEmpty
@@ -108,6 +110,24 @@ public struct Matrix {
         print(self.value)
     }
 
+    static func == (left: Matrix, right: Matrix) -> Bool {
+        // check if correct dimensions
+        if left.rows != right.rows || left.cols != right.cols {
+            return false
+        }
+
+        // check each entry
+        for i in (0...left.rows - 1) {
+            for j in (0...right.cols - 1) {
+                if left[i, j] != right[i, j] {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+
     static func + (left: Matrix, right: Matrix) -> Matrix {
         // check if correct dimensions
         assert(left.rows == right.rows || left.cols == right.cols, "Matrices must be of equal dimensions to add") 
@@ -128,32 +148,99 @@ public struct Matrix {
         return res
     }
 
-    // def __mul__(self, other):
-    //     // check if correct dimensions
-    //     if self.cols != other.rows:
-    //         raise ValueError("Matrices must be m*n and n*p to multiply")
-    //     else:
-    //         // multiply if correct dimensions
-    //         res = matrix([[]])
-    //         res.zero(self.rows, other.cols)
-    //         for i in range(self.rows):
-    //             for j in range(other.cols):
-    //                 for k in range(self.cols):
-    //                     res.value[i][j] += self.value[i][k] * other.value[k][j]
-    //         return res
+    static func * (left: Matrix, right: Matrix) -> Matrix {
+        // check if correct dimensions
+        assert(left.cols == right.rows, "Matrices must be m*n and n*p to multiply")
 
-    // def transpose(self):
-    //     // compute transpose
-    //     res = matrix([[]])
-    //     res.zero(self.cols, self.rows)
-    //     for i in range(self.rows):
-    //         for j in range(self.cols):
-    //             res.value[j][i] = self.value[i][j]
-    //     return res
+        // multiply if correct dimensions
+        var res = Matrix.zeros(left.rows, right.cols)
+        for i in (0...left.rows - 1) {
+            for j in (0...right.cols - 1) {
+                for k in (0...left.cols - 1) {
+                    res[i, j] = res[i, j] + left[i, k] * right[k, j]
+                }
+            }
+        }
+        return res
+    }
+
+    func transpose() -> Matrix {
+        // compute transpose
+        return Matrix(self.cols, self.rows) {
+            (row, col) in self[col, row] 
+        }
+    }
 
     // // Thanks to Ernesto P. Adorio for use of Cholesky and CholeskyInverse functions
 
-    // def Cholesky(self, ztol=1.0e-5):
+    private func choleskyFactorization(zeroTolerance: Double = 1.0e-5) -> Matrix {
+
+        // Computes the upper triangular Cholesky factorization of
+        // a positive definite matrix.
+        assert(self.rows == self.cols, "Cholesky Inversion requires a square positive-definite matrix")
+
+        let dim = self.rows
+        var res = Matrix.zeros(dim, dim)
+
+        for i in (0...dim-1) {
+            // S = sum([(res.value[k][i]) ** 2 for k in range(i)])
+            let S = (0 == i) ? 0.0 : (0...i-1).map { k in res[k, i] * res[k, i] }.reduce(0.0, +)
+            let d = self[i, i] - S
+            if abs(d) < zeroTolerance {
+                res[i, i] = 0.0
+            } else {
+                assert(d >= 0.0, "Matrix must be positive-definite")
+                res[i, i] = d.squareRoot()
+            }
+            if((i + 1) < (dim - 1)) {
+                for j in (i + 1...dim-1) {
+                    // S = sum([res.value[k][i] * res.value[k][j] for k in range(self.rows)])
+                    var S = (0...dim-1).map { k in res[k, i] * res[k, j] }.reduce(0.0, +)
+                    if abs(S) < zeroTolerance {
+                        S = 0.0
+                    }
+                    res[i, j] = (self[i, j] - S) / res[i, i]
+                }
+            }
+        }
+        return res
+    }
+
+    func choleskyInverse() -> Matrix {
+
+        // Computes inverse of matrix given its Cholesky upper Triangular
+        // decomposition of matrix.
+        assert(self.rows == self.cols, "Cholesky Inversion requires a square positive-definite matrix")
+
+        let dim = self.rows
+        var res = Matrix.zeros(dim, dim)
+
+        // Backward step for inverse.
+        for j in (0...dim-1).reversed() {
+            let tjj = self[j, j]
+            // S = sum([self.value[j][k] * res.value[j][k] for k in range(j + 1, self.dimx)])
+            let S = ((j + 1) >= (dim - 1)) ? 0.0 : (j + 1...dim - 1).map { k in self[j, k] * res[j, k] }.reduce(0.0, +)
+            res[j, j] = 1.0 / (tjj * tjj) - S / tjj
+            if (j - 1) > 0 {
+                for i in (0...j-1).reversed() {
+                    // res.value[j][i] = res.value[i][j] = -sum(
+                    //     [self.value[i][k] * res.value[k][j] for k in range(i + 1, self.rows)]) / self.value[i][i]
+                    res[j, i] = -((i + 1...dim - 1).map { k in self[i, k] * res[k, j]}.reduce(0, +)) / self[i, i]
+                    res[i, j] = res[j, i]
+                }
+            }
+        }
+        return res
+    }
+
+    func inverse() -> Matrix {
+        assert(self.rows == self.cols, "Inversion requires a square positive-definite matrix")
+        let choleskyFactor = self.choleskyFactorization()
+        let inversion = choleskyFactor.choleskyInverse()
+        return inversion
+    }
+
+    // def Cholesky(self, zeroTolerance=1.0e-5):
     //     // Computes the upper triangular Cholesky factorization of
     //     // a positive definite matrix.
     //     res = matrix([[]])
@@ -162,7 +249,7 @@ public struct Matrix {
     //     for i in range(self.rows):
     //         S = sum([(res.value[k][i]) ** 2 for k in range(i)])
     //         d = self.value[i][i] - S
-    //         if abs(d) < ztol:
+    //         if abs(d) < zeroTolerance:
     //             res.value[i][i] = 0.0
     //         else:
     //             if d < 0.0:
@@ -170,7 +257,7 @@ public struct Matrix {
     //             res.value[i][i] = sqrt(d)
     //         for j in range(i + 1, self.rows):
     //             S = sum([res.value[k][i] * res.value[k][j] for k in range(self.rows)])
-    //             if abs(S) < ztol:
+    //             if abs(S) < zeroTolerance:
     //                 S = 0.0
     //             try:
     //                 res.value[i][j] = (self.value[i][j] - S) / res.value[i][i]
@@ -195,6 +282,7 @@ public struct Matrix {
     //     return res
 
     // def inverse(self):
+    //     assert(self.rows == self.cols, "Inversion requires a square positive-definite matrix")
     //     aux = self.Cholesky()
     //     res = aux.CholeskyInverse()
     //     return res
@@ -205,19 +293,29 @@ public struct Matrix {
 
 
 
-let zeros = Matrix.zeros(4, 4)
-let identity = Matrix.identity(dim: 4)
-let stateTransitionMatrix = Matrix([[1.0, 0.0, 1.0, 0.0], 
-                                    [0.0, 1.0, 0.0, 1.0], 
-                                    [0.0, 0.0, 1.0, 0.0], 
-                                    [0.0, 0.0, 0.0, 1.0]])
+// let zeros = Matrix.zeros(4, 4)
+// let identity = Matrix.identity(dim: 4)
+// let stateTransitionMatrix = Matrix([[1.0, 0.0, 1.0, 0.0], 
+//                                     [0.0, 1.0, 0.0, 1.0], 
+//                                     [0.0, 0.0, 1.0, 0.0], 
+//                                     [0.0, 0.0, 0.0, 1.0]])
 
-zeros.show()
-identity.show()
-stateTransitionMatrix.show()
+// zeros.show()
+// identity.show()
+// stateTransitionMatrix.show()
 
-let sum = zeros + identity + stateTransitionMatrix
-sum.show()
+// let sum = zeros + identity + stateTransitionMatrix
+// sum.show()
+
+// let diff = sum - stateTransitionMatrix - identity
+// diff.show()
+
+// let product = stateTransitionMatrix * identity
+// product.show()
+
+// assert(stateTransitionMatrix * identity == stateTransitionMatrix * identity)
+
+// Matrix([[11, 12, 13], [21, 22, 23]]).transpose().show()
 
 
 
@@ -226,37 +324,40 @@ sum.show()
 
 // Implement the filter function below
 
-// def kalman_filter(x, P):
-//     for n in range(len(measurements)):
+func kalmanFilter(_ x: Matrix, _ P: Matrix) -> (Matrix, Matrix) {
 
-//         // measurement update
-//         // e = zᵀ - H·x
-//         // S = H·P·Hᵀ + R
-//         // K = P·Hᵀ·S⁻¹
-//         // x' = x + (K·y)
-//         // P' = (I - K·H)·P
-//         z = matrix([[measurements[n]]])     // - Z is the measurement
-//         e = z.transpose() - H * x           // - e is the error
-//         S = H * P * H.transpose() + R       // - S is mapping of covariance into measurement space with noise
-//         K = P * H.transpose() * S.inverse() // - K is the Kalman Gain
-//         x = x + K * e
-//         P = (I - K * H) * P
+    var x = x;
+    var P = P;
+    for n in (0...measurements.count-1) {
+        // measurement update
+        // e = zᵀ - H·x
+        // S = H·P·Hᵀ + R
+        // K = P·Hᵀ·S⁻¹
+        // x' = x + (K·y)
+        // P' = (I - K·H)·P
+        let z = Matrix([[measurements[n]]])     // - Z is the measurement
+        let e = z.transpose() - H * x           // - e is the error
+        let S = H * P * H.transpose() + R       // - S is mapping of covariance into measurement space with noise
+        let K = P * H.transpose() * S.inverse() // - K is the Kalman Gain
+        x = x + K * e
+        P = (I - K * H) * P
 
-//         // prediction
-//         // x' = Fx + u
-//         // P' = F·P·Fᵀ
-//         x = F * x + u
-//         P = F * P * F.transpose()
+        // prediction
+        // x' = Fx + u
+        // P' = F·P·Fᵀ
+        x = F * x + u
+        P = F * P * F.transpose()
+    }
 
-
-//     return (x, P)
+    return (x, P)
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////// use the code below to test your filter!
 ////////////////////////////////////////////////////////////////////////////////////////
 
-// measurements = [1, 2, 3]
+let measurements = [1.0, 2.0, 3.0]
 
 var x = Matrix([[0.0], [0.0]])  // initial state (location and velocity)
 var P = Matrix([[1000.0, 0.0], [0.0, 1000.0]])  // initial uncertainty
@@ -266,7 +367,10 @@ let H = Matrix([[1.0, 0.0]])  // measurement function
 let R = Matrix([[1.0]])  // measurement uncertainty
 let I = Matrix([[1.0, 0.0], [0.0, 1.0]])  // identity matrix
 
-// print(kalman_filter(x, P))
+let result: (x:Matrix, P:Matrix) = kalmanFilter(x, P)
+result.x.show()
+result.P.show()
+
 // output should be:
 // x: [[3.9996664447958645], [0.9999998335552873]]
 // P: [[2.3318904241194827, 0.9991676099921091], [0.9991676099921067, 0.49950058263974184]]
