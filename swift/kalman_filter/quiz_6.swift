@@ -265,8 +265,8 @@ func kalmanFilter(_ x: Matrix, _ P: Matrix) -> (Matrix, Matrix) {
         // K = P·Hᵀ·S⁻¹
         // x' = x + (K·y)
         // P' = (I - K·H)·P
-        let z = Matrix([measurements[n]])       // - Z is the measurement
-        let e = z.transpose() - H * x           // - e is the error
+        let z = Matrix([measurements[n]])       // - z is the measurement vector
+        let e = z.transpose() - H * x           // - e is the error measurement and current estimate
         let S = H * P * H.transpose() + R       // - S is mapping of covariance into measurement space with noise
         let K = P * H.transpose() * S.inverse() // - K is the Kalman Gain
         x = x + K * e
