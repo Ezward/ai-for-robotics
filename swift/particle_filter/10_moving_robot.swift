@@ -40,15 +40,12 @@ extension Double {
 	** like cyclic truncate.
 	*/
 	func wrapRange(_ min: Double, _ max: Double) -> Double {
-		assert(max > min, "Max must be greater than min")
-		let span = max - min
-		if self > max {
-			return min + trunc((self - min) / span)
-		} else if self < min {
-			return max + trunc((self - min) / span)
-		} else {
-			return self
-		}
+		assert(max >= min, "Max must be greater than or equal min")
+		if self < min || self > max {
+			let span = max - min
+			return self - floor((self - min) / span) * span
+		} 
+		return self
 	}
 
     /*
@@ -152,8 +149,8 @@ public struct Robot {
 
 		// move, and add randomness to the motion command
 		let dist = forward + Double.normalRandom(0.0, self.forward_noise)
-		let x = self.x + (cos(orientation) * dist).wrapRange(0, world_size)
-		let y = self.y + (sin(orientation) * dist).wrapRange(0, world_size)
+		let x = (self.x + (cos(orientation) * dist)).wrapRange(0, world_size)
+		let y = (self.y + (sin(orientation) * dist)).wrapRange(0, world_size)
 
 		// set particle
 		var res = Robot(x, y, orientation)
@@ -201,10 +198,45 @@ func eval(r: Robot, p: [Robot]) -> Double {
 ////////   DON'T MODIFY ANYTHING ABOVE HERE! ENTER CODE BELOW ////////
 
 var myrobot = Robot(30, 50, Double.pi / 2)
+print(myrobot.sense())
 myrobot = myrobot.move(turn: -Double.pi / 2, forward: 15)
 print(myrobot.sense())
 myrobot = myrobot.move(turn: -Double.pi / 2, forward: 10)
 print(myrobot.sense())
 
-// self test
+/////////////// Double.wrapRange(min, max) self test ///////////////
+print((-0.5).wrapRange(1, 3))
+assert((-0.5).wrapRange(1, 3).isApproximately(1.5, 0.00001))
 
+print(0.5.wrapRange(1, 3))
+assert(0.5.wrapRange(1, 3).isApproximately(2.5, 0.00001))
+
+print(1.5.wrapRange(1, 3))
+assert(1.5.wrapRange(1, 3).isApproximately(1.5, 0.00001))
+
+print(2.5.wrapRange(1, 3))
+assert(2.5.wrapRange(1, 3).isApproximately(2.5, 0.00001))
+
+print(3.5.wrapRange(1, 3))
+assert(3.5.wrapRange(1, 3).isApproximately(1.5, 0.00001))
+
+print(4.5.wrapRange(1, 3))
+assert(4.5.wrapRange(1, 3).isApproximately(2.5, 0.00001))
+
+print((-3.5).wrapRange(-3, -1))
+assert((-3.5).wrapRange(-3, -1).isApproximately(-1.5, 0.00001))
+
+print((-2.5).wrapRange(-3, -1))
+assert((-2.5).wrapRange(-3, -1).isApproximately(-2.5, 0.00001))
+
+print((-1.5).wrapRange(-3, -1))
+assert((-1.5).wrapRange(-3, -1).isApproximately(-1.5, 0.00001))
+
+print((-0.5).wrapRange(-3, -1))
+assert((-0.5).wrapRange(-3, -1).isApproximately(-2.5, 0.00001))
+
+print((0.5).wrapRange(-3, -1))
+assert((0.5).wrapRange(-3, -1).isApproximately(-1.5, 0.00001))
+
+print((1.5).wrapRange(-3, -1))
+assert((1.5).wrapRange(-3, -1).isApproximately(-2.5, 0.00001))
