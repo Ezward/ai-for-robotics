@@ -87,10 +87,6 @@ extension Double {
         return mu + z * sigma
 	}
 }
-func randInt(_ a: Int, _ b:Int) -> Int  
-{
-    return Int.random(in: a...b)
-}
 
 
 let landmarks = [[20.0, 20.0], [80.0, 80.0], [20.0, 80.0], [80.0, 20.0]]
@@ -198,45 +194,21 @@ func eval(r: Robot, p: [Robot]) -> Double {
 ////////   DON'T MODIFY ANYTHING ABOVE HERE! ENTER CODE BELOW ////////
 
 var myrobot = Robot(30, 50, Double.pi / 2)
-print(myrobot.sense())
 myrobot = myrobot.move(turn: -Double.pi / 2, forward: 15)
 print(myrobot.sense())
 myrobot = myrobot.move(turn: -Double.pi / 2, forward: 10)
 print(myrobot.sense())
 
 /////////////// Double.wrapRange(min, max) self test ///////////////
-print((-0.5).wrapRange(1, 3))
 assert((-0.5).wrapRange(1, 3).isApproximately(1.5, 0.00001))
-
-print(0.5.wrapRange(1, 3))
 assert(0.5.wrapRange(1, 3).isApproximately(2.5, 0.00001))
-
-print(1.5.wrapRange(1, 3))
 assert(1.5.wrapRange(1, 3).isApproximately(1.5, 0.00001))
-
-print(2.5.wrapRange(1, 3))
 assert(2.5.wrapRange(1, 3).isApproximately(2.5, 0.00001))
-
-print(3.5.wrapRange(1, 3))
 assert(3.5.wrapRange(1, 3).isApproximately(1.5, 0.00001))
-
-print(4.5.wrapRange(1, 3))
 assert(4.5.wrapRange(1, 3).isApproximately(2.5, 0.00001))
-
-print((-3.5).wrapRange(-3, -1))
 assert((-3.5).wrapRange(-3, -1).isApproximately(-1.5, 0.00001))
-
-print((-2.5).wrapRange(-3, -1))
 assert((-2.5).wrapRange(-3, -1).isApproximately(-2.5, 0.00001))
-
-print((-1.5).wrapRange(-3, -1))
 assert((-1.5).wrapRange(-3, -1).isApproximately(-1.5, 0.00001))
-
-print((-0.5).wrapRange(-3, -1))
 assert((-0.5).wrapRange(-3, -1).isApproximately(-2.5, 0.00001))
-
-print((0.5).wrapRange(-3, -1))
 assert((0.5).wrapRange(-3, -1).isApproximately(-1.5, 0.00001))
-
-print((1.5).wrapRange(-3, -1))
 assert((1.5).wrapRange(-3, -1).isApproximately(-2.5, 0.00001))
