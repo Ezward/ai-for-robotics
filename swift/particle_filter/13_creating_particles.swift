@@ -1,15 +1,11 @@
-// Now add noise to your robot as follows:
-// forward_noise = 5.0, turn_noise = 0.1,
-// sense_noise = 5.0.
+// Now we want to create particles,
+// p[i] = robot(). In this assignment, write
+// code that will assign 1000 such particles
+// to a list.
 //
-// Once again, your robot starts at 30, 50,
-// heading north (pi/2), then turns clockwise
-// by pi/2, moves 15 meters, senses,
-// then turns clockwise by pi/2 again, moves
-// 10 m, then senses again.
-//
-// Your program should print out the result of
-// your two sense measurements.
+// Your program should print out the length
+// of your list (don't cheat by making an
+// arbitrary list of 1000 elements!)
 //
 // Don't modify the code below. Please enter
 // your code at the bottom.
@@ -201,15 +197,13 @@ func eval(r: Robot, p: [Robot]) -> Double {
 
 
 ////////   DON'T MODIFY ANYTHING ABOVE HERE! ENTER CODE BELOW ////////
-// hack to set random seed
-let now = Date()
-for i in (0...(Int(now.timeIntervalSince1970) % 1000)) {
-    Double.random()
+
+let N = 1000
+let p = (0..<1000).map {
+    _ in Robot()
 }
 
-var myrobot = Robot(30, 50, Double.pi / 2)
-myrobot = myrobot.setNoise(5.0, 0.1, 5.0)
-myrobot = myrobot.move(turn: -Double.pi / 2, forward: 15)
-print(myrobot.sense())
-myrobot = myrobot.move(turn: -Double.pi / 2, forward: 10)
-print(myrobot.sense())
+// enter code here
+
+print(p.count)
+
