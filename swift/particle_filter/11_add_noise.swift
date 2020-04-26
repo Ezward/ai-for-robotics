@@ -1,14 +1,19 @@
-// Make a robot called myrobot that starts at
-// coordinates 30, 50 heading north (pi/2).
-// Have your robot turn clockwise by pi/2, move
-// 15 m, and sense. Then have it turn clockwise
-// by pi/2 again, move 10 m, and sense again.
+// Now add noise to your robot as follows:
+// forward_noise = 5.0, turn_noise = 0.1,
+// sense_noise = 5.0.
+//
+// Once again, your robot starts at 30, 50,
+// heading north (pi/2), then turns clockwise
+// by pi/2, moves 15 meters, senses,
+// then turns clockwise by pi/2 again, moves
+// 10 m, then senses again.
 //
 // Your program should print out the result of
 // your two sense measurements.
 //
 // Don't modify the code below. Please enter
 // your code at the bottom.
+
 import Foundation
 
 extension Sequence where Element: AdditiveArithmetic {
@@ -191,24 +196,17 @@ func eval(r: Robot, p: [Robot]) -> Double {
 	return sum / Double(p.count)
 }
 
+
 ////////   DON'T MODIFY ANYTHING ABOVE HERE! ENTER CODE BELOW ////////
+// hack to set random seed
+let now = Date()
+for i in (0...(Int(now.timeIntervalSince1970) % 1000)) {
+    Double.random()
+}
 
 var myrobot = Robot(30, 50, Double.pi / 2)
+myrobot = myrobot.setNoise(5.0, 0.1, 5.0)
 myrobot = myrobot.move(turn: -Double.pi / 2, forward: 15)
 print(myrobot.sense())
 myrobot = myrobot.move(turn: -Double.pi / 2, forward: 10)
 print(myrobot.sense())
-
-/////////////// Double.wrapRange(min, max) self test ///////////////
-assert((-0.5).wrapRange(1, 3).isApproximately(1.5, 0.00001))
-assert(0.5.wrapRange(1, 3).isApproximately(2.5, 0.00001))
-assert(1.5.wrapRange(1, 3).isApproximately(1.5, 0.00001))
-assert(2.5.wrapRange(1, 3).isApproximately(2.5, 0.00001))
-assert(3.5.wrapRange(1, 3).isApproximately(1.5, 0.00001))
-assert(4.5.wrapRange(1, 3).isApproximately(2.5, 0.00001))
-assert((-3.5).wrapRange(-3, -1).isApproximately(-1.5, 0.00001))
-assert((-2.5).wrapRange(-3, -1).isApproximately(-2.5, 0.00001))
-assert((-1.5).wrapRange(-3, -1).isApproximately(-1.5, 0.00001))
-assert((-0.5).wrapRange(-3, -1).isApproximately(-2.5, 0.00001))
-assert((0.5).wrapRange(-3, -1).isApproximately(-1.5, 0.00001))
-assert((1.5).wrapRange(-3, -1).isApproximately(-2.5, 0.00001))
