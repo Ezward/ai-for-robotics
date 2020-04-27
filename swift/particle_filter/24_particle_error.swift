@@ -3,83 +3,83 @@
 import Foundation
 
 func bisectLeft<T: Comparable>(_ a: [T], _ x: T, lowBound: Int = 0, highBound: Int? = nil) -> Int {
-    // 
-    // Return the index where to insert item x in list a, assuming a is sorted.
-    // The return value i is such that all e in a[:i] have e < x, and all e in
-    // a[i:] have e >= x.  So if x already appears in the list, a.insert(x) will
-    // insert just before the leftmost x already there.
-    // Optionally bound the slice to be search from lowBound to highBound,
-    // otherwise search the entire array.
-    // 
-    assert(lowBound >= 0, "lowBound must be non-negative")
-    var lo = lowBound
-    var hi = highBound ?? a.count
-    while lo < hi {
-        let mid = (lo + hi) / 2
-        if a[mid] < x {
-            lo = mid + 1
-        } else {
-            hi = mid
-        }
-    }
-    return lo
+	// 
+	// Return the index where to insert item x in list a, assuming a is sorted.
+	// The return value i is such that all e in a[:i] have e < x, and all e in
+	// a[i:] have e >= x.  So if x already appears in the list, a.insert(x) will
+	// insert just before the leftmost x already there.
+	// Optionally bound the slice to be search from lowBound to highBound,
+	// otherwise search the entire array.
+	// 
+	assert(lowBound >= 0, "lowBound must be non-negative")
+	var lo = lowBound
+	var hi = highBound ?? a.count
+	while lo < hi {
+		let mid = (lo + hi) / 2
+		if a[mid] < x {
+			lo = mid + 1
+		} else {
+			hi = mid
+		}
+	}
+	return lo
 }
 
 func bisectRight<T: Comparable>(_ a: [T], _ x: T, lowBound: Int = 0, highBound: Int? = nil) -> Int {
-    // """Return the index where to insert item x in list a, assuming a is sorted.
-    // The return value i is such that all e in a[:i] have e <= x, and all e in
-    // a[i:] have e > x.  So if x already appears in the list, a.insert(x) will
-    // insert just after the rightmost x already there.
-    // Optional args lo (default 0) and hi (default len(a)) bound the
-    // slice of a to be searched.
-    // """
-    assert(lowBound >= 0, "lowBound must be non-negative")
-    var lo = lowBound
-    var hi = highBound ?? a.count
-    while lo < hi {
-        let mid = (lo + hi) / 2
-        if x < a[mid] {
-            hi = mid
-        } else {
-            lo = mid + 1
-        }
-    }
-    return lo
+	// """Return the index where to insert item x in list a, assuming a is sorted.
+	// The return value i is such that all e in a[:i] have e <= x, and all e in
+	// a[i:] have e > x.  So if x already appears in the list, a.insert(x) will
+	// insert just after the rightmost x already there.
+	// Optional args lo (default 0) and hi (default len(a)) bound the
+	// slice of a to be searched.
+	// """
+	assert(lowBound >= 0, "lowBound must be non-negative")
+	var lo = lowBound
+	var hi = highBound ?? a.count
+	while lo < hi {
+		let mid = (lo + hi) / 2
+		if x < a[mid] {
+			hi = mid
+		} else {
+			lo = mid + 1
+		}
+	}
+	return lo
 }
 
 extension Sequence where Element: AdditiveArithmetic {
-    /*
-    ** sum any Numeric sequence
-    */    
-    func sum() -> Element {
-        return reduce(.zero, +)
-    }
+	/*
+	** sum any Numeric sequence
+	*/    
+	func sum() -> Element {
+		return reduce(.zero, +)
+	}
 }
 extension Double {
-    static let twoPi = 2 * Double.pi
+	static let twoPi = 2 * Double.pi
 	static let sqrtTwoPi = sqrt(Double.twoPi)
 
-    /*
-    ** Test Double equality within a tolerance
-    */
-    func isApproximately(_ value: Double, _ tolerance: Double) -> Bool
-    {
-        return abs(self - value) <= abs(tolerance)
-    }
+	/*
+	** Test Double equality within a tolerance
+	*/
+	func isApproximately(_ value: Double, _ tolerance: Double) -> Bool
+	{
+		return abs(self - value) <= abs(tolerance)
+	}
 
-    /*
-    ** square the Double
-    */
-    func squared() -> Double {
-        self * self
-    }
+	/*
+	** square the Double
+	*/
+	func squared() -> Double {
+		self * self
+	}
 
-    /*
-    ** cube the Double
-    */
-    func cubed() -> Double {
-        self * self * self
-    }
+	/*
+	** cube the Double
+	*/
+	func cubed() -> Double {
+		self * self * self
+	}
 
 	/*
 	** keep Double in range by wrapping (like modulo
@@ -94,21 +94,21 @@ extension Double {
 		return self
 	}
 
-    /*
-    ** uniform random Double between 0.0 and 1.0
-    */
-    static func random() -> Double {
-        return drand48()
-    }
+	/*
+	** uniform random Double between 0.0 and 1.0
+	*/
+	static func random() -> Double {
+		return drand48()
+	}
 
-    /*
-    ** generate a random Double within range (min...max) 
-    ** from a uniform distribution
-    */
+	/*
+	** generate a random Double within range (min...max) 
+	** from a uniform distribution
+	*/
 	static func uniformRandom(_ min: Double, _ max: Double) -> Double {
-        assert(max > min, "Max must be greater than min")
-        return min + Double.random() * (max - min)
-    }
+		assert(max > min, "Max must be greater than min")
+		return min + Double.random() * (max - min)
+	}
 
 	/*
 	** generate a random Double from the gaussian distribution
@@ -116,33 +116,33 @@ extension Double {
 	*/
 	private static var nextNormalRandom: Double? = nil
 	static func normalRandom(_ mu: Double, _ sigma: Double) -> Double {
-        //
+		//
 		// Algorithm based on property that if x and y
 		// are two uniformly distributed variables 
 		// from the range 0...1, then
-        //
-        //    cos(2*pi*x)*sqrt(-2*log(1-y))
-        //    sin(2*pi*x)*sqrt(-2*log(1-y))
-        //
-        // are two independent variables with 
+		//
+		//    cos(2*pi*x)*sqrt(-2*log(1-y))
+		//    sin(2*pi*x)*sqrt(-2*log(1-y))
+		//
+		// are two independent variables with 
 		// normal distribution (mu = 0.0, sigma = 1.0).
 		//
-        if nil == self.nextNormalRandom {
+		if nil == self.nextNormalRandom {
 			let x = Double.random()
 			let y = Double.random()
-            let x2pi = x * Double.twoPi
-            let g2rad = (-2.0 * log(1.0 - y)).squareRoot()
+			let x2pi = x * Double.twoPi
+			let g2rad = (-2.0 * log(1.0 - y)).squareRoot()
 
-            // save one of the independant randoms and return the other
-            self.nextNormalRandom = sin(x2pi) * g2rad  // independant //1
-            let z = cos(x2pi) * g2rad                  // independant //2
+			// save one of the independant randoms and return the other
+			self.nextNormalRandom = sin(x2pi) * g2rad  // independant //1
+			let z = cos(x2pi) * g2rad                  // independant //2
 			return mu + z * sigma
 		}
 
-        // return the saved independant random, and reset for next two
-        let z = self.nextNormalRandom!
-        self.nextNormalRandom = nil
-        return mu + z * sigma
+		// return the saved independant random, and reset for next two
+		let z = self.nextNormalRandom!
+		self.nextNormalRandom = nil
+		return mu + z * sigma
 	}
 
 }
@@ -153,13 +153,13 @@ let world_size = 100.0
 
 
 public struct Robot {
-    var x: Double             // horzontal position in world
-    var y: Double             // vertical position in world
-    var orientation: Double   // heading in radians
-    var forward_noise: Double // forward movement noise 
-    var turn_noise: Double    // turning movement noise
-    var sense_noise: Double   // landmark sensing noise
-    
+	var x: Double             // horzontal position in world
+	var y: Double             // vertical position in world
+	var orientation: Double   // heading in radians
+	var forward_noise: Double // forward movement noise 
+	var turn_noise: Double    // turning movement noise
+	var sense_noise: Double   // landmark sensing noise
+	
 	init(_ x: Double? = nil, _ y: Double? = nil, _ orientation: Double? = nil) {
 		self.x = x ?? (Double.random() * world_size)
 		self.y = y ?? (Double.random() * world_size)
@@ -167,7 +167,7 @@ public struct Robot {
 		self.forward_noise = 0.0
 		self.turn_noise = 0.0
 		self.sense_noise = 0.0
-    }
+	}
 
 	mutating func set(_ new_x: Double, _ new_y: Double, _ new_orientation: Double) -> Robot {
 		assert(new_x >= 0 && new_x < world_size, "X coordinate out of bound")
@@ -177,7 +177,7 @@ public struct Robot {
 		self.y = new_y
 		self.orientation = new_orientation
 		return self
-    }
+	}
 
 	mutating func setNoise(_ new_f_noise: Double, _ new_t_noise: Double, _ new_s_noise: Double) -> Robot {
 		// makes it possible to change the noise parameters
@@ -186,15 +186,15 @@ public struct Robot {
 		self.turn_noise = new_t_noise
 		self.sense_noise = new_s_noise
 		return self
-    }
+	}
 
 	func sense() -> [Double] {
-        let Z = landmarks.map {
+		let Z = landmarks.map {
 			landmark in sqrt((self.x - landmark[0]).squared() + (self.y - landmark[1]).squared()) 
-                + Double.normalRandom(0.0, self.sense_noise)
-        }
+				+ Double.normalRandom(0.0, self.sense_noise)
+		}
 		return Z
-    }
+	}
 
 	func move(turn: Double, forward: Double) -> Robot {
 		assert(forward >= 0.0, "Robot cant move backwards")
@@ -221,12 +221,12 @@ public struct Robot {
 		// calculates the probability of x for 1-dim Gaussian with mean mu and standard deviation sigma
 		let variance = sigma.squared()
 		return exp(-(mu - x).squared() / variance / 2)
-		       / (sigma * Double.sqrtTwoPi)
+			   / (sigma * Double.sqrtTwoPi)
 	}
 
-    /*
-    ** calculate how likely this measurement is based on the known landmarks
-    */
+	/*
+	** calculate how likely this measurement is based on the known landmarks
+	*/
 	func measurementProbability(_ measurement: [Double]) -> Double {
 		// calculates how likely a measurement should be
 		var probability = 1.0
@@ -263,27 +263,27 @@ func eval(_ r: Robot, _ p: [Robot]) -> Double {
 ** hack to randomize the random seed
 */
 func randomizeSeed() {
-    let now = Date()
-    for _ in (0...(Int(now.timeIntervalSince1970) % 1000)) {
-        Double.random()
-    }
+	let now = Date()
+	for _ in (0...(Int(now.timeIntervalSince1970) % 1000)) {
+		Double.random()
+	}
 }
 func generateParticles(_ N: Int) -> [Robot] {
-    let p: [Robot] = (0..<N).map { _ in
-        var r = Robot()
-        return r.setNoise(0.05, 0.05, 5.0)
-    }
-    return p
+	let p: [Robot] = (0..<N).map { _ in
+		var r = Robot()
+		return r.setNoise(0.05, 0.05, 5.0)
+	}
+	return p
 }
 
 /*
 ** Move all particles given turn then forward
 */
 func moveParticles(_ p: [Robot], turn: Double, forward: Double) -> [Robot] {
-    let p = p.map {
-        r in r.move(turn: turn, forward: forward)
-    }
-    return p
+	let p = p.map {
+		r in r.move(turn: turn, forward: forward)
+	}
+	return p
 }
 
 /*
@@ -297,14 +297,14 @@ func moveParticles(_ p: [Robot], turn: Double, forward: Double) -> [Robot] {
 */
 func weighParticles(_ p: [Robot], _ Z: [Double]) -> (weights: [Double], max: Double) {
 	let N = p.count
-    var maxw = 0.0
-    var w: [Double] = []
-    for i in (0..<N) {
-        let prob = p[i].measurementProbability(Z)
-        w.append(prob)
-        maxw = max(maxw, prob)  // find the max measurement probability as we calculate them
-    }
-    return (weights: w, max: maxw)
+	var maxw = 0.0
+	var w: [Double] = []
+	for i in (0..<N) {
+		let prob = p[i].measurementProbability(Z)
+		w.append(prob)
+		maxw = max(maxw, prob)  // find the max measurement probability as we calculate them
+	}
+	return (weights: w, max: maxw)
 }
 
 //
@@ -318,18 +318,18 @@ func resampleParticles(_ p: [Robot], _ w: [Double], _ maxw: Double) -> [Robot] {
 	assert(p.count == w.count, "Particles and weights must be same length")
 
 	let N = p.count
-    var p3: [Robot] = []
-    var beta = 0.0
-    var index = Int.random(in: 0..<N)                  // choose a random cell
-    for _ in (0..<p.count) {			               // pick same number of new samples
-        beta += Double.uniformRandom(0.0, maxw * 2.0)  // jump up to twice largest particle probability
-        while beta > w[index] {                        // move forward from current index to next
-            beta -= w[index]                           // by reducing beta until if 'fits' in a cell
-            index = (index + 1) % N
-        }
-        p3.append(p[index])                            // choose that particle
-    }
-    return p3
+	var p3: [Robot] = []
+	var beta = 0.0
+	var index = Int.random(in: 0..<N)                  // choose a random cell
+	for _ in (0..<p.count) {			               // pick same number of new samples
+		beta += Double.uniformRandom(0.0, maxw * 2.0)  // jump up to twice largest particle probability
+		while beta > w[index] {                        // move forward from current index to next
+			beta -= w[index]                           // by reducing beta until if 'fits' in a cell
+			index = (index + 1) % N
+		}
+		p3.append(p[index])                            // choose that particle
+	}
+	return p3
 }
 
 
@@ -348,8 +348,8 @@ for _ in (0..<T) {
 	p = moveParticles(p, turn: 0.1, forward: 5.0)   // 3. move particles with same movement as robot
 	let w = weighParticles(p, Z)                    // 4. calculate weight (similarity to robot) for each particle
 	p = resampleParticles(p, w.weights, w.max)      // 5. resample the particles given similarity weights
-    let e = eval(myrobot, p)
-    print(e)
+	let e = eval(myrobot, p)
+	print(e)
 }
 
 
