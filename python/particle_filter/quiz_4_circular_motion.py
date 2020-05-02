@@ -119,18 +119,18 @@ class robot:
 		d = random.gauss(d, self.distance_noise)
 
 		# beta
-		turning_angle = tan(steering_angle) * d / L	# turning angle beta
-		if turning_angle >= 0.0001:
-			turning_radius = d / turning_angle		# turning radius R
+		heading_change = tan(steering_angle) * d / L	# change in heading (beta)
+		if heading_change >= 0.0001:
+			turning_radius = d / heading_change		# turning radius R
 			cx = x - sin(theta) * turning_radius	# center of turn
 			cy = y + cos(theta) * turning_radius    # center of turn
-			x_new = cx + sin(theta + turning_angle) * turning_radius
-			y_new = cy - cos(theta + turning_angle) * turning_radius
-			theta_new = (theta + turning_angle) % (2*pi)
+			x_new = cx + sin(theta + heading_change) * turning_radius
+			y_new = cy - cos(theta + heading_change) * turning_radius
+			theta_new = (theta + heading_change) % (2*pi)
 		else:
 			x_new = x + d * cos(theta)
 			y_new = y + d * sin(theta)
-			theta_new = (theta + turning_angle) % (2*pi)
+			theta_new = (theta + heading_change) % (2*pi)
 
 		result = robot(self.length)
 		result.bearing_noise = self.bearing_noise
