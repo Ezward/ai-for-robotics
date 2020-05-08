@@ -92,10 +92,10 @@ class robot:
 	#   obtains bearings from positions
 	#
 
-	def sense(self):  # do not change the name of this function
+	def sense(self, add_noise = False):  # do not change the name of this function
 		# ENTER CODE HERE
 		# HINT: You will probably need to use the function atan2()
-		def landmarkBearing(landmark, add_noise = False):
+		def landmarkBearing(landmark):
 			noise = random.gauss(0.0, self.bearing_noise) if add_noise else 0
 			z = (atan2(landmark[0] - self.y, landmark[1] - self.x) - self.orientation + noise) % (2 * pi)
 			return z
